@@ -131,7 +131,7 @@ ball = {
 
 // Function to control paddle with the mouse
 function mouseEventHandler(event) {
-  let relativeY = event.clientY - player.height/4;
+  let relativeY = event.clientY - canvas.offsetTop;
   if (relativeY > 0 && relativeY < canvas.height) {
     player.y = relativeY - player.height/2;
   }
