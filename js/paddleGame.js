@@ -2,7 +2,7 @@
 var width = 700, height = 600, pi = Math.PI;
 var canvas, context, keystate;
 var player, ai, ball;
-var upArrow = 38, downArrow = 40;
+const upArrow = 38, downArrow = 40, wKey = 87, sKey = 83;
 
 // Player Data
 player = {
@@ -14,9 +14,9 @@ player = {
 
   // Set player move speed and boundaries
   update: function() {
-    if (keystate[upArrow] && this.y >= 0)
+    if ((keystate[upArrow] || keystate[wKey]) && this.y >= 0)
       this.y -= 7;
-    if (keystate[downArrow] && this.y + this.height <= height)
+    if ((keystate[downArrow] || keystate[sKey]) && this.y + this.height <= height)
       this.y += 7;
   },
   draw: function() {
@@ -129,34 +129,13 @@ ball = {
   }
 };
 
-function main() {
-  // Create and attach play field to body
-  canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  context = canvas.getContext('2d');
-  document.body.appendChild(canvas);
-
-  // Set up and down keys for player paddle
-  keystate = {};
-  document.addEventListener('keydown', function(event) {
-    keystate[event.keyCode] = true;
-  });
-  document.addEventListener('keyup', function(event) {
-    delete keystate[event.keyCode];
-  });
-
-  // Create initial game state
-  initialize();
-
-  var loop = function() {
-    update();
-    draw();
-
-    window.requestAnimationFrame(loop, canvas);
-  };
-  window.requestAnimationFrame(loop, canvas);
-};
+// Function to control paddle with the mouse
+function mouseEventHandler(event) {
+  let relativeY = event.clientY - canvas.offsetTop;
+  if (relativeY > 0 && relativeY < canvas.height) {
+    player.y = relativeY - player.height/2;
+  }
+}
 
 // Function to set game to initial state
 function initialize() {
@@ -226,6 +205,37 @@ function difficultySelect() {
       ai.skill = 0.2;
       break;
   };
+};
+
+function main() {
+  // Create and attach play field to body
+  canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  context = canvas.getContext('2d');
+  document.body.appendChild(canvas);
+
+  // Set up/w and down/s keys for player paddle
+  keystate = {};
+  document.addEventListener('keydown', function(event) {
+    keystate[event.keyCode] = true;
+  });
+  document.addEventListener('keyup', function(event) {
+    delete keystate[event.keyCode];
+  });
+  // Set mouse movement for player paddle
+  document.addEventListener('mousemove', mouseEventHandler, false);
+
+  // Create initial game state
+  initialize();
+
+  var loop = function() {
+    update();
+    draw();
+
+    window.requestAnimationFrame(loop, canvas);
+  };
+  window.requestAnimationFrame(loop, canvas);
 };
 
 // Run game
