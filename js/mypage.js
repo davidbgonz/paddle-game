@@ -2,7 +2,7 @@
 var width = 700, height = 600, pi = Math.PI;
 var canvas, context, keystate;
 var player, ai, ball;
-var upArrow = 38, downArrow = 40;
+const upArrow = 38, downArrow = 40, wKey = 87, sKey = 83;
 
 // Player Data
 player = {
@@ -14,9 +14,9 @@ player = {
 
   // Set player move speed and boundaries
   update: function() {
-    if (keystate[upArrow] && this.y >= 0)
+    if ((keystate[upArrow] || keystate[wKey]) && this.y >= 0)
       this.y -= 7;
-    if (keystate[downArrow] && this.y + this.height <= height)
+    if ((keystate[downArrow] || keystate[sKey]) && this.y + this.height <= height)
       this.y += 7;
   },
   draw: function() {
